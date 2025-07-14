@@ -1,26 +1,19 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Star, ArrowRight } from "lucide-react";
+import { Star, ArrowRight, Flower } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const CTA: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const handleConsultationClick = () => {
-    // Always use isAuthenticated from AuthContext for consistency
-    if (isAuthenticated) {
-      // If authenticated, navigate to the consultation page
-      navigate('/?openConsultation=true');
-    } else {
-      // If not authenticated, navigate to the login page
-      navigate('/login?fromConsultation=true');
-    }
+  const handleHerbalConsultationClick = () => {
+    navigate('/herbal-medicine');
   };
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-lens-purple/90 to-blue-600/90 text-white relative overflow-hidden">
+    <section className="py-20 px-4 bg-gradient-to-br from-lens-purple/90 to-emerald-600/90 text-white relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
         <div className="absolute top-10 left-10 w-64 h-64 bg-white/5 rounded-full"></div>
@@ -29,31 +22,29 @@ const CTA: React.FC = () => {
       </div>
       
       <div className="max-w-7xl mx-auto relative z-10">
-
-        
         {/* Main CTA */}
         <div className="text-center max-w-3xl mx-auto">
-          <h2 className="font-display text-4xl font-bold mb-6">Ready to Take Control of Your Health?</h2>
+          <h2 className="font-display text-4xl font-bold mb-6">Ready to Explore Traditional Herbal Medicine?</h2>
           <p className="text-xl mb-10 text-white/90">
-            Join thousands of people who have discovered integrated healthcare that combines conventional and alternative medicine.
+            Connect with centuries of Ghanaian herbal wisdom through our AI-powered platform. Get personalized guidance on natural remedies and traditional healing practices.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {!isAuthenticated && (
               <Link to="/signup">
                 <Button size="lg" className="rounded-full px-8 py-6 text-lg bg-white text-lens-purple hover:bg-gray-100">
-                  Start Your Health Journey
+                  Start Your Herbal Journey
                 </Button>
               </Link>
             )}
             <Button 
               size="lg" 
-              onClick={handleConsultationClick}
+              onClick={handleHerbalConsultationClick}
               variant={isAuthenticated ? "default" : "outline"} 
               className={`rounded-full px-8 py-6 text-lg ${isAuthenticated 
                 ? "bg-white text-lens-purple hover:bg-gray-100" 
                 : "border-white text-white bg-lens-purple/20 hover:bg-lens-purple/30"}`}
             >
-              Book Consultation <ArrowRight className="ml-2 h-5 w-5" />
+              Start Herbal Consultation <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>

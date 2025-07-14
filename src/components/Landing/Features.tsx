@@ -1,35 +1,35 @@
 import React from 'react';
 import { 
-  Calendar,
-  Pill, 
-  Apple, 
-  Brain,
   Flower2,
-  Stethoscope
+  Brain,
+  Leaf,
+  Sparkles,
+  BookOpen,
+  Shield
 } from 'lucide-react';
 import { motion } from "framer-motion";
 
 const Features: React.FC = () => {
   const features = [
     {
-      icon: <Calendar className="h-10 w-10 text-lens-purple" />,
-      title: "Consultation Booking",
-      description: "Book appointments with healthcare professionals through our AI-optimized scheduling system. Get reminders and join virtual consultations with ease."
-    },
-    {
-      icon: <Pill className="h-10 w-10 text-lens-blue" />,
-      title: "E-Pharmacy",
-      description: "Upload prescriptions for instant validation, check drug interactions, and order medications with secure delivery tracking and automatic refill options."
-    },
-    {
-      icon: <Brain className="h-10 w-10 text-lens-orange" />,
-      title: "Mental Health Support",
-      description: "Track your emotional wellbeing, access guided assessments, and connect with therapists. Includes emergency protocols and personalized coping strategies."
+      icon: <Brain className="h-10 w-10 text-lens-purple" />,
+      title: "AI-Powered Consultation",
+      description: "Get personalized herbal medicine advice from our AI consultant trained on traditional Ghanaian remedies. Ask questions and receive evidence-based recommendations."
     },
     {
       icon: <Flower2 className="h-10 w-10 text-emerald-500" />,
-      title: "Herbal Medicine",
-      description: "Explore evidence-based herbal treatments with our comprehensive database. Check herb-drug interactions and receive proper usage guidance from traditional knowledge."
+      title: "Traditional Knowledge Base",
+      description: "Access our comprehensive database of 100+ documented Ghanaian herbal remedies, traditional practices, and cultural healing wisdom passed down through generations."
+    },
+    {
+      icon: <Leaf className="h-10 w-10 text-green-500" />,
+      title: "Natural Remedies Guide",
+      description: "Discover natural treatments for common ailments, learn proper preparation methods, and understand the traditional uses of various herbs and plants."
+    },
+    {
+      icon: <Shield className="h-10 w-10 text-blue-500" />,
+      title: "Safety & Interactions",
+      description: "Get information about herb-drug interactions, safety precautions, and proper dosage guidelines to ensure safe and effective use of herbal remedies."
     }
   ];
 
@@ -37,9 +37,9 @@ const Features: React.FC = () => {
     <section className="py-20 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-display text-4xl font-bold mb-6 text-gray-900">Comprehensive Healthcare at Your Fingertips</h2>
+          <h2 className="font-display text-4xl font-bold mb-6 text-gray-900">Traditional Wisdom Meets Modern AI</h2>
           <p className="text-xl text-gray-600">
-            eDok integrates conventional and alternative medicine in one platform, providing holistic care for your complete wellbeing.
+            Experience the power of traditional Ghanaian herbal medicine enhanced with cutting-edge artificial intelligence for personalized guidance and care.
           </p>
         </div>
         
@@ -83,7 +83,7 @@ const Features: React.FC = () => {
             >
               <img 
                 src="/assets/data-analyst-avatar-icon-poster-2.png" 
-                alt="eDok Health Platform" 
+                alt="eDok Herbal Medicine Platform" 
                 className="w-full h-auto"
               />
             </motion.div>
@@ -97,7 +97,7 @@ const Features: React.FC = () => {
               viewport={{ once: true }}
             ></motion.div>
             <motion.div 
-              className="absolute -top-4 -left-4 w-32 h-32 bg-lens-blue/10 rounded-full z-0"
+              className="absolute -top-4 -left-4 w-32 h-32 bg-emerald-400/10 rounded-full z-0"
               initial={{ scale: 0, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.6 }}
@@ -107,39 +107,39 @@ const Features: React.FC = () => {
           
           {/* Right side - Feature list */}
           <div className="space-y-8">
-            <h2 className="font-display text-3xl font-bold text-gray-900">Your Health Assistant Powered by AI</h2>
+            <h2 className="font-display text-3xl font-bold text-gray-900">Your Personal Herbal Medicine Guide</h2>
             <p className="text-lg text-gray-600">
-              Our intuitive platform provides personalized healthcare solutions, integrating cutting-edge AI with trusted medical knowledge.
+              Our AI-powered platform combines traditional Ghanaian herbal knowledge with modern technology to provide you with personalized, culturally-relevant health guidance.
             </p>
             
             <div className="space-y-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-lens-purple/10 flex items-center justify-center">
-                  <Stethoscope className="h-6 w-6 text-lens-purple" />
+                  <Brain className="h-6 w-6 text-lens-purple" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Integrated Health Record</h3>
-                  <p className="text-gray-600">All your health data in one place, securely stored and accessible to your care providers with your permission.</p>
+                  <h3 className="text-xl font-semibold mb-2">Intelligent Consultation</h3>
+                  <p className="text-gray-600">Our AI consultant understands your symptoms and provides personalized herbal medicine recommendations based on traditional Ghanaian practices.</p>
                 </div>
               </div>
               
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-lens-blue/10 flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-lens-blue" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                  <BookOpen className="h-6 w-6 text-emerald-500" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Smart Appointment Scheduling</h3>
-                  <p className="text-gray-600">AI suggests optimal appointment times based on your schedule and specialist availability.</p>
+                  <h3 className="text-xl font-semibold mb-2">Comprehensive Knowledge Base</h3>
+                  <p className="text-gray-600">Access detailed information about herbs, their traditional uses, preparation methods, and cultural significance in Ghanaian medicine.</p>
                 </div>
               </div>
               
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-lens-green/10 flex items-center justify-center">
-                  <Pill className="h-6 w-6 text-lens-green" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-green-500" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Prescription Management</h3>
-                  <p className="text-gray-600">Upload prescriptions for validation, receive medication reminders, and get automatic refill notifications.</p>
+                  <h3 className="text-xl font-semibold mb-2">Cultural Relevance</h3>
+                  <p className="text-gray-600">Get guidance that respects and incorporates traditional Ghanaian healing practices and cultural understanding of health and wellness.</p>
                 </div>
               </div>
             </div>

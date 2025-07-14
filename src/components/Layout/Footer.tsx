@@ -1,47 +1,17 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from "@/components/shared/Logo";
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/components/ui/use-toast';
 
 const Footer: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleAdminLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-    e.preventDefault();
-    
-    if (!isAuthenticated) {
-      // If not authenticated, redirect to login page with returnUrl
-      navigate(`/login?returnUrl=${encodeURIComponent(path)}`);
-      return;
-    }
-    
-    if (user?.role !== 'admin') {
-      // If authenticated but not admin, show message and redirect to homepage
-      toast({
-        title: "Access Denied",
-        description: "You need admin privileges to access this area.",
-        variant: "destructive"
-      });
-      navigate('/');
-      return;
-    }
-    
-    // If admin, proceed to the requested page
-    navigate(path);
-  };
-  
   return (
     <footer className="bg-white py-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="col-span-1">
             <Logo className="mb-4" />
             <p className="text-gray-600 mb-4">
-              Your integrated health platform combining conventional and alternative medicine for complete wellbeing.
+              Your trusted platform for traditional Ghanaian herbal medicine knowledge and AI-powered guidance.
             </p>
             <div className="flex space-x-4">
               <a href="https://www.facebook.com/edokhealth" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-lens-purple transition-colors">
@@ -81,46 +51,9 @@ const Footer: React.FC = () => {
             <h3 className="font-semibold text-gray-900 mb-4">Services</h3>
             <ul className="space-y-3">
               <li><Link to="/" className="text-gray-600 hover:text-lens-purple transition-colors">Home</Link></li>
-              {/* <li><Link to="/pharmacy" className="text-gray-600 hover:text-lens-purple transition-colors">E-Pharmacy</Link></li> */}
-              {/* <li><Link to="/mental-health" className="text-gray-600 hover:text-lens-purple transition-colors">Mental Health</Link></li> */}
               <li><Link to="/herbal-medicine" className="text-gray-600 hover:text-lens-purple transition-colors">Herbal Medicine</Link></li>
             </ul>
           </div>
-          
-
-          
-          {/* <div className="col-span-1">
-            <h3 className="font-semibold text-gray-900 mb-4">Admin</h3>
-            <ul className="space-y-3">
-              <li>
-                <a 
-                  href="#" 
-                  onClick={(e) => handleAdminLinkClick(e, '/admin')} 
-                  className="text-gray-600 hover:text-lens-purple transition-colors"
-                >
-                  Dashboard
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  onClick={(e) => handleAdminLinkClick(e, '/admin/consultations')} 
-                  className="text-gray-600 hover:text-lens-purple transition-colors"
-                >
-                  Consultations
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  onClick={(e) => handleAdminLinkClick(e, '/admin/orders')} 
-                  className="text-gray-600 hover:text-lens-purple transition-colors"
-                >
-                  Orders
-                </a>
-              </li>
-            </ul>
-          </div> */}
         </div>   
         
         <div className="mt-12 pt-8 border-t border-gray-200">

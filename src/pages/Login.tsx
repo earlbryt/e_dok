@@ -22,13 +22,6 @@ const Login: React.FC = () => {
   // Parse query parameters
   const queryParams = new URLSearchParams(location.search);
   const returnUrl = queryParams.get('returnUrl');
-  const action = queryParams.get('action');
-  const fromConsultation = queryParams.get('fromConsultation') === 'true';
-  const openChat = queryParams.get('openChat') === 'true';
-  const openAssessment = queryParams.get('openAssessment') === 'true';
-  
-  // Check if the returnUrl contains a checkout redirect
-  const isCheckoutRedirect = returnUrl?.includes('returnToCheckout=true');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,47 +43,12 @@ const Login: React.FC = () => {
       
       // Handle redirects based on parameters
       if (returnUrl) {
-        // If we're returning to checkout flow
-        if (isCheckoutRedirect) {
-          toast({
-            title: "Login Successful",
-            description: "Returning to checkout"
-          });
-          navigate(decodeURIComponent(returnUrl));
-        }
-        // If we're returning to mental health page with chat or assessment flags
-        else if (openChat) {
-          toast({
-            title: "Login Successful",
-            description: "You will now be redirected to chat with Serene Companion."
-          });
-          navigate(`${decodeURIComponent(returnUrl)}?openChat=true`);
-        } else if (openAssessment) {
-          toast({
-            title: "Login Successful",
-            description: "You will now be redirected to take your mental health assessment."
-          });
-          navigate(`${decodeURIComponent(returnUrl)}?openAssessment=true`);
-        } else if (action === 'assessment') {
-          // Legacy support for session storage method
-          toast({
-            title: "Login Successful",
-            description: "You will now be redirected to take your assessment."
-          });
-          // Add a flag to session storage to trigger assessment dialog
-          sessionStorage.setItem('openAssessmentDialog', 'true');
-          navigate(decodeURIComponent(returnUrl));
-        } else {
-          // Generic return URL
-          toast({
-            title: "Login Successful",
-            description: "You will now be redirected to your requested page."
-          });
-          navigate(decodeURIComponent(returnUrl));
-        }
-      } else if (fromConsultation) {
-        // Coming from consultation booking attempt
-        navigate('/?fromConsultation=true');
+        // Generic return URL
+        toast({
+          title: "Login Successful",
+          description: "You will now be redirected to your requested page."
+        });
+        navigate(decodeURIComponent(returnUrl));
       } else {
         // Regular login flow
         // Check the role from the returned user data
@@ -104,7 +62,7 @@ const Login: React.FC = () => {
           // Regular users stay on the home page
           toast({
             title: "Login Successful",
-            description: "Welcome back!"
+            description: "Welcome back! You can now access our herbal medicine consultation."
           });
           navigate('/');
         }
@@ -138,7 +96,7 @@ const Login: React.FC = () => {
           >
             <img 
               src="/assets/login.png" 
-              alt="Lens" 
+              alt="eDok Herbal Medicine" 
               className="mx-auto w-3/4 h-auto drop-shadow-2xl"
             />
           </motion.div>
@@ -147,11 +105,11 @@ const Login: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <h2 className="mt-8 text-3xl font-bold text-lens-purple">Online Consultation</h2>
-            <p className="mt-2 text-gray-600">Welcome back! Schedule your medical appointments with qualified healthcare professionals.</p>
+            <h2 className="mt-8 text-3xl font-bold text-lens-purple">Herbal Medicine Consultation</h2>
+            <p className="mt-2 text-gray-600">Welcome back! Connect with traditional Ghanaian herbal wisdom through our AI-powered consultant.</p>
           </motion.div>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-br from-lens-purple/20 to-transparent opacity-70 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-lens-purple/20 to-emerald-400/10 opacity-70 z-0"></div>
       </div>
       
       {/* Right side with login form */}
@@ -183,7 +141,7 @@ const Login: React.FC = () => {
               <Logo size="lg" className="inline-block mx-auto" />
               <h2 className="mt-6 text-3xl font-bold text-gray-900">Sign in to your account</h2>
               <p className="mt-2 text-sm text-gray-600 mb-2">
-                Access your medical consultation dashboard{' '}
+                Access your herbal medicine consultation{' '}
                 <Link to="/signup" className="font-medium text-lens-purple hover:text-lens-purple/80">
                   or create a new account
                 </Link>
@@ -210,12 +168,7 @@ const Login: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
-                  <Link to="/forgot-password" className="text-xs font-medium text-lens-purple hover:text-lens-purple-light">
-                    Forgot password?
-                  </Link>
-                </div>
+                <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input 
@@ -239,34 +192,22 @@ const Login: React.FC = () => {
                   </button>
                 </div>
               </div>
-              
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-lens-purple focus:ring-lens-purple border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
-              </div>
             </div>
             
             <Button 
               type="submit" 
-              className="w-full bg-lens-purple hover:bg-lens-purple-light text-white font-medium py-2.5"
+              className="w-full bg-lens-purple hover:bg-lens-purple-light text-white py-3"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Signing in...' : 'Sign in'}
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link to="/signup" className="font-medium text-lens-purple hover:text-lens-purple-light">
-                Sign up
+              <Link to="/signup" className="font-medium text-lens-purple hover:text-lens-purple/80">
+                Sign up here
               </Link>
             </p>
           </div>
