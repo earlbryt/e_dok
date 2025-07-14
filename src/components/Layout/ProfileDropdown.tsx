@@ -54,21 +54,6 @@ const ProfileDropdown: React.FC = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/profile" className="flex cursor-pointer items-center">
-                <User className="mr-2 h-4 w-4" />
-                <span>My Profile</span>
-              </Link>
-            </DropdownMenuItem>
-            {user?.role === 'admin' && (
-              <DropdownMenuItem asChild>
-                <Link to="/admin" className="flex cursor-pointer items-center">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  <span>Admin Dashboard</span>
-                </Link>
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600 focus:text-red-500" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
