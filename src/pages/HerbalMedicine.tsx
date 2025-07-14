@@ -47,6 +47,105 @@ interface HerbalChatbotProps {
   onClose: () => void;
 }
 
+// --- PLANT IMAGE LOGIC START ---
+
+// List of all plant names
+const PLANT_NAMES = [
+  "Cryptolepis sanguinolenta",
+  "Momordica charantia",
+  "Desmodium adscendens",
+  "Moringa oleifera",
+  "Xylopia aethiopica",
+  "Cassia alata",
+  "Alchornea cordifolia",
+  "Dracaena mannii",
+  "Chromolaena odorata",
+  "Ficus exasperata",
+  "Zanthoxylum zanthoxyloides",
+  "Hibiscus sabdariffa",
+  "Psidium guajava",
+  "Ocimum gratissimum",
+  "Phyllanthus amarus",
+  "Anchomanes difformis",
+  "Mondia whitei",
+  "Bidens pilosa",
+  "Allium sativum",
+  "Pausinystalia johimbe",
+  "Carica papaya",
+  "Khaya senegalensis",
+  "Morinda lucida",
+  "Vernonia amygdalina",
+  "Adansonia digitata",
+  "Bridelia ferruginea",
+  "Costus afer",
+  "Ginkgo biloba",
+  "Hypericum perforatum",
+  "Passiflora incarnata",
+  "Melissa officinalis",
+  "Cassia occidentalis",
+  "Jatropha curcas",
+  "Serenoa repens",
+  "Cymbopogon citratus",
+  "Alstonia boonei",
+  "Sida acuta",
+  "Eucalyptus citriodora",
+  "Mentha piperita",
+  "Adhatoda vasica",
+  "Symphytum officinale",
+  "Glycyrrhiza glabra",
+  "Taraxacum officinale",
+  "Arctostaphylos uva-ursi",
+  "Vitex agnus-castus",
+  "Calendula officinalis",
+  "Stellaria media",
+  "Mahonia aquifolium",
+  "Melaleuca alternifolia"
+];
+
+// Helper: Extract plant names from the LLM response using the PLANTS: [...] line
+function extractPlantNamesFromLLM(message: string): string[] {
+  const match = message.match(/PLANTS:\s*(\[.*?\])/s);
+  if (!match) return [];
+  try {
+    const arr = JSON.parse(match[1]);
+    if (Array.isArray(arr)) return arr;
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+// Helper: Query the plant_images table for the image file for a plant
+async function getPlantImageUrlFromTable(plantName: string, supabase: any): Promise<string | null> {
+  // Query the plant_images table for the file_name and extension
+  const { data, error } = await supabase
+    .from('plant_images')
+    .select('file_name')
+    .eq('plant_name', plantName)
+    .limit(1)
+    .single();
+  if (error || !data) return null;
+  // Get the public URL from storage
+  const { data: urlData } = supabase.storage.from('plant-images').getPublicUrl(data.file_name);
+  return urlData?.publicUrl || null;
+}
+
+// Helper: Get a random image from the bucket (cache the list)
+let allPlantImagesCache: string[] | null = null;
+async function getRandomPlantImageUrl(supabase: any): Promise<string | null> {
+  if (!allPlantImagesCache) {
+    const { data, error } = await supabase.storage.from('plant-images').list('', { limit: 100 });
+    if (error || !data) return null;
+    allPlantImagesCache = data.filter((f: any) => f.name.match(/\.(png|jpe?g)$/i)).map((f: any) => f.name);
+  }
+  if (!allPlantImagesCache.length) return null;
+  const randomFile = allPlantImagesCache[Math.floor(Math.random() * allPlantImagesCache.length)];
+  const { data } = supabase.storage.from('plant-images').getPublicUrl(randomFile);
+  return data?.publicUrl || null;
+}
+
+// --- PLANT IMAGE LOGIC END ---
+
 const HerbalChatbot: React.FC<HerbalChatbotProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
@@ -62,6 +161,9 @@ const HerbalChatbot: React.FC<HerbalChatbotProps> = ({ isOpen, onClose }) => {
   const [isFullScreen, setIsFullScreen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [historyLoaded, setHistoryLoaded] = useState(false);
+
+  // Add state for plant images per message
+  const [plantImages, setPlantImages] = useState<{ [msgId: string]: string[] }>({});
 
   // Scroll to bottom of messages
   useEffect(() => {
@@ -124,6 +226,36 @@ const HerbalChatbot: React.FC<HerbalChatbotProps> = ({ isOpen, onClose }) => {
       setHistoryLoaded(false);
     }
   }, [isOpen]);
+
+  // --- PLANT IMAGE LOGIC: Display images below assistant messages ---
+  // When a new assistant message is added, extract plant names and fetch images
+  useEffect(() => {
+    // Only process the latest assistant message
+    if (!messages.length) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.sender !== 'assistant') return;
+    // If already have images for this message, skip
+    if (plantImages[lastMsg.id]) return;
+    // Extract plant names from the PLANTS: [...] line
+    const foundPlants = extractPlantNamesFromLLM(lastMsg.content);
+    if (!foundPlants.length) return;
+    // Fetch images for each plant from the plant_images table
+    (async () => {
+      const urls: string[] = [];
+      for (const plant of foundPlants) {
+        const url = await getPlantImageUrlFromTable(plant, supabase);
+        if (url) {
+          urls.push(url);
+        } else {
+          // Fallback: random image (from previous logic)
+          const fallback = await getRandomPlantImageUrl(supabase);
+          if (fallback) urls.push(fallback);
+        }
+      }
+      setPlantImages(prev => ({ ...prev, [lastMsg.id]: urls }));
+    })();
+  }, [messages, supabase, plantImages]);
+  // --- END PLANT IMAGE LOGIC ---
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -401,35 +533,46 @@ const HerbalChatbot: React.FC<HerbalChatbotProps> = ({ isOpen, onClose }) => {
 
                   {/* Message bubbles with iOS-like styling - mobile optimized */}
                   {messages.map((message, index) => (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} items-end w-full`}
-                    >
-                      {message.sender === 'assistant' && (
-                        <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-emerald-100 flex items-center justify-center mr-1.5 sm:mr-2 mb-1 shadow-sm border border-emerald-200/50 flex-shrink-0">
-                          <Leaf className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600" />
-                        </div>
-                      )}
-                      
-                      <div
-                        className={`max-w-[75%] sm:max-w-[85%] md:max-w-[70%] p-2.5 sm:p-3.5 ${message.sender === 'user' 
-                          ? 'bg-gradient-to-br from-lens-purple to-lens-purple-light text-white rounded-2xl rounded-tr-sm shadow-[0_2px_8px_rgba(126,58,242,0.25)]' 
-                          : 'bg-white/95 backdrop-blur-sm border border-gray-100 text-gray-800 rounded-2xl rounded-tl-sm shadow-[0_2px_10px_rgba(0,0,0,0.03)]'}`}
+                    <React.Fragment key={message.id}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} items-end w-full`}
                       >
-                        {/* Inner highlight effect for depth */}
-                        <div className="absolute inset-x-0 top-0 h-[40%] bg-gradient-to-b from-white/20 to-transparent rounded-t-2xl opacity-50 pointer-events-none"></div>
-                        <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">{message.content}</p>
-                      </div>
+                        {message.sender === 'assistant' && (
+                          <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-emerald-100 flex items-center justify-center mr-1.5 sm:mr-2 mb-1 shadow-sm border border-emerald-200/50 flex-shrink-0">
+                            <Leaf className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-600" />
+                          </div>
+                        )}
+                        
+                        <div
+                          className={`max-w-[75%] sm:max-w-[85%] md:max-w-[70%] p-2.5 sm:p-3.5 ${message.sender === 'user' 
+                            ? 'bg-gradient-to-br from-lens-purple to-lens-purple-light text-white rounded-2xl rounded-tr-sm shadow-[0_2px_8px_rgba(126,58,242,0.25)]' 
+                            : 'bg-white/95 backdrop-blur-sm border border-gray-100 text-gray-800 rounded-2xl rounded-tl-sm shadow-[0_2px_10px_rgba(0,0,0,0.03)]'}`}
+                        >
+                          {/* Inner highlight effect for depth */}
+                          <div className="absolute inset-x-0 top-0 h-[40%] bg-gradient-to-b from-white/20 to-transparent rounded-t-2xl opacity-50 pointer-events-none"></div>
+                          <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">{message.content}</p>
+                        </div>
 
-                      {message.sender === 'user' && (
-                        <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-lens-purple-light flex items-center justify-center ml-1.5 sm:ml-2 mb-1 shadow-sm flex-shrink-0">
-                          <div className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-white/90"></div>
+                        {message.sender === 'user' && (
+                          <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-lens-purple-light flex items-center justify-center ml-1.5 sm:ml-2 mb-1 shadow-sm flex-shrink-0">
+                            <div className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-white/90"></div>
+                          </div>
+                        )}
+                      </motion.div>
+                      {/* PLANT IMAGE UI: Show images below assistant message */}
+                      {message.sender === 'assistant' && plantImages[message.id] && plantImages[message.id].length > 0 && (
+                        <div className="flex flex-wrap gap-3 mt-2 mb-2 ml-8">
+                          {plantImages[message.id].map((url, i) => (
+                            <div key={i} className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-white flex items-center justify-center">
+                              <img src={url} alt="Herbal plant" className="object-cover w-full h-full" />
+                            </div>
+                          ))}
                         </div>
                       )}
-                    </motion.div>
+                    </React.Fragment>
                   ))}
 
                   {/* iOS-style typing indicator - mobile optimized */}
