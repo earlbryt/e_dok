@@ -115,6 +115,11 @@ function extractPlantNamesFromLLM(message: string): string[] {
   }
 }
 
+// Helper: Remove the PLANTS: [...] line from the message for display
+function stripPlantsLine(message: string): string {
+  return message.replace(/PLANTS:\s*\[.*?\]\s*$/s, '').trim();
+}
+
 // Helper: Query the plant_images table for the image file for a plant
 async function getPlantImageUrlFromTable(plantName: string, supabase: any): Promise<string | null> {
   // Query the plant_images table for the file_name and extension
@@ -553,7 +558,7 @@ const HerbalChatbot: React.FC<HerbalChatbotProps> = ({ isOpen, onClose }) => {
                         >
                           {/* Inner highlight effect for depth */}
                           <div className="absolute inset-x-0 top-0 h-[40%] bg-gradient-to-b from-white/20 to-transparent rounded-t-2xl opacity-50 pointer-events-none"></div>
-                          <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">{message.content}</p>
+                          <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">{message.sender === 'assistant' ? stripPlantsLine(message.content) : message.content}</p>
                         </div>
 
                         {message.sender === 'user' && (
