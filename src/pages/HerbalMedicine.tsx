@@ -552,31 +552,42 @@ const HerbalChatbot: React.FC<HerbalChatbotProps> = ({ isOpen, onClose }) => {
                         )}
                         
                         <div
-                          className={`max-w-[75%] sm:max-w-[85%] md:max-w-[70%] p-2.5 sm:p-3.5 ${message.sender === 'user' 
+                          className={`relative max-w-[75%] sm:max-w-[85%] md:max-w-[70%] p-2.5 sm:p-3.5 ${message.sender === 'user' 
                             ? 'bg-gradient-to-br from-lens-purple to-lens-purple-light text-white rounded-2xl rounded-tr-sm shadow-[0_2px_8px_rgba(126,58,242,0.25)]' 
                             : 'bg-white/95 backdrop-blur-sm border border-gray-100 text-gray-800 rounded-2xl rounded-tl-sm shadow-[0_2px_10px_rgba(0,0,0,0.03)]'}`}
                         >
                           {/* Inner highlight effect for depth */}
                           <div className="absolute inset-x-0 top-0 h-[40%] bg-gradient-to-b from-white/20 to-transparent rounded-t-2xl opacity-50 pointer-events-none"></div>
-                          <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words">{message.sender === 'assistant' ? stripPlantsLine(message.content) : message.content}</p>
+                          <p className="whitespace-pre-wrap text-xs sm:text-sm leading-relaxed break-words mb-3">{message.sender === 'assistant' ? stripPlantsLine(message.content) : message.content}</p>
+                          {/* PLANT IMAGE UI: Show images inside assistant message box */}
+                          {message.sender === 'assistant' && plantImages[message.id] && plantImages[message.id].length > 0 && (
+                            <div className="flex flex-row flex-wrap gap-4 justify-start items-center mt-2">
+                              {plantImages[message.id].map((url, i) => (
+                                <a
+                                  key={i}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block group"
+                                  style={{ maxWidth: '220px' }}
+                                >
+                                  <img
+                                    src={url}
+                                    alt="Herbal plant"
+                                    className="rounded-xl border border-gray-200 shadow-md object-cover w-full h-40 sm:h-48 md:h-56 transition-transform duration-200 group-hover:scale-105 group-hover:shadow-lg cursor-zoom-in bg-white"
+                                    style={{ minWidth: '120px', maxWidth: '220px' }}
+                                  />
+                                </a>
+                              ))}
+                            </div>
+                          )}
                         </div>
-
                         {message.sender === 'user' && (
                           <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-lens-purple-light flex items-center justify-center ml-1.5 sm:ml-2 mb-1 shadow-sm flex-shrink-0">
                             <div className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full bg-white/90"></div>
                           </div>
                         )}
                       </motion.div>
-                      {/* PLANT IMAGE UI: Show images below assistant message */}
-                      {message.sender === 'assistant' && plantImages[message.id] && plantImages[message.id].length > 0 && (
-                        <div className="flex flex-wrap gap-3 mt-2 mb-2 ml-8">
-                          {plantImages[message.id].map((url, i) => (
-                            <div key={i} className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-white flex items-center justify-center">
-                              <img src={url} alt="Herbal plant" className="object-cover w-full h-full" />
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </React.Fragment>
                   ))}
 
