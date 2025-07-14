@@ -57,7 +57,7 @@ const Signup: React.FC = () => {
         console.log("Signup.tsx: userData received, attempting toast and navigate.");
         toast({
         title: "Account Created!",
-        description: "Welcome to eDok! You have been successfully signed up. We are redirecting you to the homepage.",
+        description: "Welcome to eDok! You can now access our herbal medicine consultation.",
         variant: "default",
       });
       console.log("Signup.tsx: Toast from Signup.tsx should have been displayed.");
@@ -120,7 +120,7 @@ const Signup: React.FC = () => {
               <Logo size="lg" className="inline-block mx-auto" />
               <h2 className="mt-6 text-3xl font-bold text-gray-900">Create your account</h2>
               <p className="mt-2 text-sm text-gray-600 mb-2">
-                Get access to prescribed medications and healthcare services
+                Join our community and discover traditional Ghanaian herbal medicine wisdom
               </p>
             </div>
           </div>
@@ -199,33 +199,22 @@ const Signup: React.FC = () => {
                   />
                 </div>
               </div>
-              
-              <div className="text-xs text-gray-500">
-                By signing up, you agree to our{' '}
-                <Link to="/terms" className="font-medium text-lens-purple hover:text-lens-purple-light">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" className="font-medium text-lens-purple hover:text-lens-purple-light">
-                  Privacy Policy
-                </Link>.
-              </div>
             </div>
             
             <Button 
               type="submit" 
-              className="w-full bg-lens-purple hover:bg-lens-purple-light text-white font-medium py-2.5"
+              className="w-full bg-lens-purple hover:bg-lens-purple-light text-white py-3"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Creating account...' : 'Create account'}
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-lens-purple hover:text-lens-purple-light">
-                Sign in
+              <Link to="/login" className="font-medium text-lens-purple hover:text-lens-purple/80">
+                Sign in here
               </Link>
             </p>
           </div>
@@ -233,11 +222,11 @@ const Signup: React.FC = () => {
       </div>
       
       {/* Right side with image */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-lens-purple/5 items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-emerald-400/5 to-lens-purple/5 items-center justify-center overflow-hidden">
         <div className="relative z-10 p-12 text-center">
           <motion.div
-            initial={{ scale: 0.7, opacity: 0, rotate: -5 }}
-            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            initial={{ scale: 0.7, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
             transition={{
               type: "spring",
               stiffness: 260,
@@ -246,8 +235,8 @@ const Signup: React.FC = () => {
             }}
           >
             <img 
-              src="/assets/content-management-icon-poster-2.png" 
-              alt="Healthcare Platform" 
+              src="/assets/content-management-icon-poster-2.png"
+              alt="eDok Herbal Medicine" 
               className="mx-auto w-3/4 h-auto drop-shadow-2xl"
             />
           </motion.div>
@@ -256,11 +245,11 @@ const Signup: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <h2 className="mt-8 text-3xl font-bold text-lens-purple">Online Pharmacy</h2>
-            <p className="mt-2 text-gray-600">Access your prescribed medications and healthcare products with secure online ordering</p>
+            <h2 className="mt-8 text-3xl font-bold text-lens-purple">Join Our Community</h2>
+            <p className="mt-2 text-gray-600">Connect with traditional Ghanaian herbal medicine and discover natural healing wisdom passed down through generations.</p>
           </motion.div>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-tl from-lens-purple/20 to-transparent opacity-70 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 to-lens-purple/20 opacity-70 z-0"></div>
       </div>
     </div>
   );
